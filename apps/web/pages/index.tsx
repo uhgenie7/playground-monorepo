@@ -1,4 +1,4 @@
-import { Button } from "ui";
+import { Button } from 'hooks';
 
 export default function Web() {
   return (
