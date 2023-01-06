@@ -6,7 +6,7 @@ import {
   useSetRecoilState,
   useResetRecoilState,
 } from 'recoil';
-import arrayState from '../store/arrayState';
+import arrayState from '@/store/arrayState';
 
 const IndexPage: NextPage = () => {
   const [array, setArray] = useRecoilState(arrayState);
