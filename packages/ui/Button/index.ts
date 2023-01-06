@@ -1,2 +1,2 @@
-import { SCButton } from './Button';
+import { SCButton } from './SCButton';
 export { SCButton };
