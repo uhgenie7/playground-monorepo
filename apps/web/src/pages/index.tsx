@@ -7,6 +7,7 @@ import {
   useResetRecoilState,
 } from 'recoil';
 import arrayState from '@/store/arrayState';
+import { SCButton } from 'ui';
 
 const IndexPage: NextPage = () => {
   const [array, setArray] = useRecoilState(arrayState);
@@ -24,13 +25,13 @@ const IndexPage: NextPage = () => {
       <div>
         <h2>useRecoilState</h2>
         <p>array: {array.join(', ')}</p>
-        <button
+        <SCButton
           onClick={() => {
             setArray(['clicked']);
           }}
         >
           click me
-        </button>
+        </SCButton>
       </div>
       <div>
         <h2>useRecoilValue</h2>
@@ -39,19 +40,19 @@ const IndexPage: NextPage = () => {
       <div>
         <h2>useSetRecoilState</h2>
         <p>
-          <button
+          <SCButton
             onClick={() => {
               setArrayState(['setArrayState']);
             }}
           >
             click me
-          </button>
+          </SCButton>
         </p>
       </div>
       <div>
         <h2>useResetRecoilState</h2>
         <p>
-          <button onClick={resetArrayState}>리셋</button>
+          <SCButton onClick={resetArrayState}>리셋</SCButton>
         </p>
       </div>
     </div>
