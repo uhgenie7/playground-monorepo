@@ -9,11 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "13.0.0",
+    "hooks": "*",
+    "next": "^13.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "ui": "*",
-    "hooks": "*"
+    "recoil": "^0.7.6",
+    "ui": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
