@@ -8,6 +8,7 @@ import {
 } from 'recoil';
 import arrayState from '@/store/arrayState';
 import { SCButton } from 'ui';
+import Form from '@/components/Form';
 
 const IndexPage: NextPage = () => {
   const [array, setArray] = useRecoilState(arrayState);
@@ -22,6 +23,7 @@ const IndexPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <header>Hello!</header>
+      <Form />
       <div>
         <h2>useRecoilState</h2>
         <p>array: {array.join(', ')}</p>
