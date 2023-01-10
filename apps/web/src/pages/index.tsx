@@ -1,5 +1,7 @@
+'use client';
+
 import type { NextPage } from 'next';
-import Head from 'next/head';
+import SignupForm from '@/components/Form';
 import {
   useRecoilState,
   useRecoilValue,
@@ -8,55 +10,40 @@ import {
 } from 'recoil';
 import arrayState from '@/store/arrayState';
 import { SCButton } from 'ui';
-import Form from '@/components/Form';
+
+import type { ISignupParams } from '@/types/signup';
+import { useRouter } from 'next/router';
 
 const IndexPage: NextPage = () => {
+  const router = useRouter();
   const [array, setArray] = useRecoilState(arrayState);
   const arrayValue = useRecoilValue(arrayState);
   const setArrayState = useSetRecoilState(arrayState);
   const resetArrayState = useResetRecoilState(arrayState);
 
+  const onClickNavigateGoBack = () => {
+    router.back();
+  };
+
+  const handleSubmit = ({
+    id,
+    password,
+    email,
+    phonenumber,
+    worker_phonenumber,
+  }: ISignupParams) => {
+    if (!id || !password || !email || !phonenumber || !worker_phonenumber)
+      return;
+
+    // join.mutate({ email, password, organization });
+  };
+
   return (
     <div>
-      <Head>
-        <title>NextJS Playground</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <header>Hello!</header>
-      <Form />
-      <div>
-        <h2>useRecoilState</h2>
-        <p>array: {array.join(', ')}</p>
-        <SCButton
-          onClick={() => {
-            setArray(['clicked']);
-          }}
-        >
-          click me
-        </SCButton>
-      </div>
-      <div>
-        <h2>useRecoilValue</h2>
-        <p>arrayValue: {arrayValue}</p>
-      </div>
-      <div>
-        <h2>useSetRecoilState</h2>
-        <p>
-          <SCButton
-            onClick={() => {
-              setArrayState(['setArrayState']);
-            }}
-          >
-            click me
-          </SCButton>
-        </p>
-      </div>
-      <div>
-        <h2>useResetRecoilState</h2>
-        <p>
-          <SCButton onClick={resetArrayState}>리셋</SCButton>
-        </p>
-      </div>
+      <SignupForm
+        onClickNavigateGoBack={onClickNavigateGoBack}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };
