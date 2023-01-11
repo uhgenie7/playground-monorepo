@@ -9,4 +9,5 @@ export const SCButton = ({
 
 const StyledButton = styled.button`
   color: blue;
+  background: skyblue;
 `;
