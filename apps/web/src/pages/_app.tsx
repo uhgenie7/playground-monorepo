@@ -9,12 +9,12 @@ import Header from '@/components/Header';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <RecoilRoot>
-      <DefaultLayout>
-        <NextUIProvider>
+      <NextUIProvider>
+        <DefaultLayout>
           <Head />
           <Component {...pageProps} />
-        </NextUIProvider>
-      </DefaultLayout>
+        </DefaultLayout>
+      </NextUIProvider>
     </RecoilRoot>
   );
 }
