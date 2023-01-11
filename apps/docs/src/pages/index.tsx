@@ -1,4 +1,4 @@
-import { SCButton } from 'ui';
+import { SCButton } from '@uhgenie7/ui';
 import { useRouter } from 'next/router';
 
 export default function Docs() {

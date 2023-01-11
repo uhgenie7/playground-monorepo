@@ -3,7 +3,7 @@ import NextHead from 'next/head';
 import type { AppProps } from 'next/app';
 import { RecoilRoot } from 'recoil';
 import { NextUIProvider } from '@nextui-org/react';
-import { LayoutWrapper } from 'ui';
+import { LayoutWrapper } from '@uhgenie7/ui';
 import Header from '@/components/Header';
 
 function MyApp({ Component, pageProps }: AppProps) {

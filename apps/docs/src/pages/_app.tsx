@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react';
 import type { AppProps } from 'next/app';
-import { LayoutWrapper } from 'ui';
+import { LayoutWrapper } from '@uhgenie7/ui';
 import { RecoilRoot } from 'recoil';
 
 function MyApp({ Component, pageProps }: AppProps) {

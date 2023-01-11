@@ -9,7 +9,7 @@ import {
   useResetRecoilState,
 } from 'recoil';
 import arrayState from '@/store/arrayState';
-import { SCButton } from 'ui';
+import { SCButton } from '@uhgenie7/ui';
 
 const RecoilPage: NextPage = () => {
   const [array, setArray] = useRecoilState(arrayState);
