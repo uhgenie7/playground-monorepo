@@ -9,9 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:unit": "jest",
+    "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "yarn test:unit --coverage"
+    "test:coverage": "yarn test --coverage"
   },
   "dependencies": {
     "@next/font": "13.1.1",

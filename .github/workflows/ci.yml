@@ -17,13 +17,16 @@ jobs:
       - name: Check out current commit (${{ github.sha }})
         uses: actions/checkout@v2
 
-      - name: Set up Node
-        uses: actions/setup-node@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-install
+
       - name: Create Unit Test Coverage
-        run: yarn test:coverage
+        run: cd apps/next13 && yarn test:coverage
 
       - name: Set unit test coverage
         uses: codecov/codecov-action@v2
