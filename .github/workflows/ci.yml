@@ -20,8 +20,10 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-          cache: 'yarn'
+          node-version: ${{ matrix.node-version }}
+
+      - name: 📥 Monorepo install
+        uses: ./.github/actions/yarn-install
 
       - name: Create Unit Test Coverage
         run: cd apps/next13 && yarn test:coverage
