@@ -1,35 +1,73 @@
 name: CI
 
 on:
-  pull_request:
-    branches: [main]
   push:
-    branches: [main]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  job_codecov_test_coverage:
-    name: Set codecov unit test coverage
+  run-lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
     steps:
-      - name: Check out current commit (${{ github.sha }})
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3
+      - name: Caching dependencies
+        uses: actions/cache@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      - name: Install dependencies
+        run: yarn
 
-      - name: 📥 Monorepo install
-        uses: ./.github/actions/yarn-install
+  run-jest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Create Unit Test Coverage
-        run: cd apps/next13 && yarn test:coverage
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      - name: Install dependencies
+        run: yarn
 
-      - name: Set unit test coverage
-        uses: codecov/codecov-action@v2
+      - name: Run tests
+        run: yarn test
+
+  run-codecov:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Caching dependencies
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      - name: Install dependencies
+        run: yarn
+
+      - name: Generate coverage report
+        run: yarn test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
