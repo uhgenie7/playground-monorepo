@@ -23,7 +23,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Create Unit Test Coverage
-        run: yarn test
+        run: cd apps/next13 yarn test:coverage
 
       - name: Set unit test coverage
         uses: codecov/codecov-action@v2
