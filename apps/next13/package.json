@@ -2,12 +2,16 @@
   "name": "next13",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "uhgenie7",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --watch"
+    "test:unit": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "yarn test:unit --coverage"
   },
   "dependencies": {
     "@next/font": "13.1.1",
