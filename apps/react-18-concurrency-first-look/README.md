@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+## data.js
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+10000개의 Product ${i+1}
 
-## Available Scripts
+## App.js
 
-In the project directory, you can run:
+input의 value 값이 바뀔 때마다 `updateFilterHandler`함수로 `filterTerm`가 update 되고, 이 value를 `filteredProducts`가 함수가 받는다.
 
-### `npm start`
+`filteredProducts`는 10000개의 Product를 value 문자가 포함된 리스트로 필터한다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+이후, `ProductList 컴포넌트` 리스트가 렌더된다.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 성능을 조절하여 확인하는 법
 
-### `npm test`
+개발자도구의 Performance tab 선택, CPU를 `6x slowdown` 으로 변경한다. 그러면 input에 입력을 가할 때마다 'laggy input field'를 느낄 수 있다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+이렇게 하면 입력필드 목록이 업데이트 되길 기다려야 한다.
 
-### `npm run build`
+laggy해진 input에 문자가 바로바로 표시되지 않으면 사용자 경험이 매우 나빠진다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+input을 먼저 업데이트하고 목록이 업데이트 되는 것을 지연시키는 것이 낫다.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 해결법
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+react18 이전에는 한번에 10000개의 데이터를 불러오기 보다, 페이지네이션, 서버측에서 필터링 수행, setTimeout 등을 사용하여 사용자 경험을 개선했다.
 
-### `npm run eject`
+이젠 react18에서 `startTransition`을 사용하여 일부 상태 업데이트를 지연시켜 사용자에게 더 나은 경험을 제공한다.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+이것이 바로 react18의 concurrency이다.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## useTransition
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+hook을 사용할 수 없는 경우에는 `import {startTransition } from 'react';` 을 사용하면 되지만, 그런 경우가 아니면 이같은 `useTransition`을 쓰자.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```tsx
+const [isPending, startTransition] = useTransition();
 
-## Learn More
+// isPending: boolean
+// startTransition: React.TransitionStartFunction
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- isPending은 우선 순위가 낮은 일부 상태 업데이트가 여전히 실행 보류 중인 지 알려준다. 이를 활용하여 사용자에게 표시할 수 있다.
+- startTransition: 낮은 우선 순위로 처리되어야 하는 경우 startTransition로 상태업데이트를 랩핑할 수 있다.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```tsx
+function App() {
+  const [isPending, startTransition] = useTransition();
+  const [filterTerm, setFilterTerm] = useState('');
 
-### Code Splitting
+  const filteredProducts = filterProducts(filterTerm);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  function updateFilterHandler(event) {
+    startTransition(() => {
+      setFilterTerm(event.target.value);
+    });
+  }
 
-### Analyzing the Bundle Size
+  return (
+    <div id="app">
+      <input type="text" onChange={updateFilterHandler} />
+      <ProductList products={filteredProducts} />
+    </div>
+  );
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+어떻게 이렇게 개선되는 걸까?
 
-### Making a Progressive Web App
+`startTransition`를 씀으로써 사용자 입력 필드에 표시되는 내용의 업데이트가 데이터 목록의 업데이트와 분리되었기 때문이다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+list of Products는 filterTerm이 표시된 제품 목록 변경을 담당하므로 낮은 우선 순위로 처리된다.
 
-### Advanced Configuration
+따라서 input 필드와 관련된 UI 업데이트는 필터된 UI 업데이트보다 더 높은 우선 순위로 처리된다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 유의점
 
-### Deployment
+언제나 그렇듯 성능 개선을 위해 마구 남용하지 말라.
+모든 상태 업데이트를 `startTransition`로 래핑해선 안 된다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+laggy한 사용자 인터페이스, 구형 디바이스, 서버에서 처리하지 못하는 경우 등 특수한 상황에 놓인 시나리오가 있는 곳에서만 사용해라.
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+useCase에서는 특히 주의해서 사용해야 한다.
