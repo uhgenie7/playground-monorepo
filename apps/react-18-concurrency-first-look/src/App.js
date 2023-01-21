@@ -19,17 +19,16 @@ function App() {
   const filteredProducts = filterProducts(filterTerm);
 
   function updateFilterHandler(event) {
-    startTransition(() => {
-      setFilterTerm(event.target.value);
-    });
-
-    // setFilterTerm(event.target.value);
+    // startTransition(() => {
+    //   setFilterTerm(event.target.value);
+    // });
+    setFilterTerm(event.target.value);
   }
 
   return (
     <div id="app">
       <input type="text" onChange={updateFilterHandler} />
-      {isPending && <p style={{ color: 'white' }}>update list</p>}
+      {/* {isPending && <p style={{ color: 'white' }}>update list</p>} */}
       <ProductList products={filteredProducts} />
     </div>
   );
