@@ -16,9 +16,9 @@ input의 value 값이 바뀔 때마다 `updateFilterHandler`함수로 `filterTer
 
 이렇게 하면 입력필드 목록이 업데이트 되길 기다려야 한다.
 
-laggy해진 input에 문자가 바로바로 표시되지 않으면 사용자 경험이 매우 나빠진다.
+laggy해진 input에 문자가 바로바로 표시되지 않으면 사용자 경험이 매우 나빠진다. (긴급한 업데이트 (urgent updates) 필요)
 
-input을 먼저 업데이트하고 목록이 업데이트 되는 것을 지연시키는 것이 낫다.
+input을 먼저 업데이트하고 목록이 업데이트 되는 것을 지연시키는 것이 낫다. (전환 업데이트 (transition updates)를 딜레이한다)
 
 ## 해결법
 
@@ -29,6 +29,8 @@ react18 이전에는 한번에 10000개의 데이터를 불러오기 보다, 페
 이것이 바로 react18의 concurrency이다.
 
 ## useTransition
+
+일부 상태 업데이트를 급하지 않은 업데이트로 간주한다. concurrent에서는 급한 상태 업데이트가 급하지 않은 상태 업데이트를 중단할 수 있다.
 
 hook을 사용할 수 없는 경우에는 `import {startTransition } from 'react';` 을 사용하면 되지만, 그런 경우가 아니면 이같은 `useTransition`을 쓰자.
 
@@ -68,9 +70,11 @@ function App() {
 
 `startTransition`를 씀으로써 사용자 입력 필드에 표시되는 내용의 업데이트가 데이터 목록의 업데이트와 분리되었기 때문이다.
 
-list of Products는 filterTerm이 표시된 제품 목록 변경을 담당하므로 낮은 우선 순위로 처리된다.
+startTransition으로 래핑된 `setFilterTerm` 필터 업데이트는 전환 업데이트로 처리되며, 긴급한 업데이트(input 타이핑)가 들어오면 중단된다.
 
-따라서 input 필드와 관련된 UI 업데이트는 필터된 UI 업데이트보다 더 높은 우선 순위로 처리된다.
+전환이 중단되면 리액트는 stale한 렌더링 작업을 버리고 마지막 업데이트만을 렌더링한다.
+
+즉, input 필드와 관련된 UI 업데이트는 바로 처리되고, 그 뒤에 필터된 UI 업데이트가 처리되는 것이다.
 
 ## 유의점
 
@@ -84,3 +88,8 @@ useCase에서는 특히 주의해서 사용해야 한다.
 ## useDeferredValue
 
 일반적으로 상태 호출을 **제어할 수 없을 때**, 타사 라이브러리 등을 사용할 때 `useTransition`와 같은 기능을 한다.
+
+## 참조
+
+[React 18 & Concurrency](https://academind.com/tutorials/react-usetransition-vs-usedeferredvalue)
+[React 18 둘러보기](https://yrnana.dev/post/2022-04-12-react-18)
